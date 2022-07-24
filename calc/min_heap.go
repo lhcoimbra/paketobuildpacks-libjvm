@@ -14,26 +14,34 @@
  * limitations under the License.
  */
 
-package calc_test
+package calc
 
 import (
-	"testing"
-
-	"github.com/sclevine/spec"
-	"github.com/sclevine/spec/report"
+	"fmt"
+	"regexp"
+	"strings"
 )
 
-func TestUnit(t *testing.T) {
-	suite := spec.New("libjvm/calc", spec.Report(report.Terminal{}))
-	suite("Calculator", testCalculator)
-	suite("DirectMemory", testDirectMemory)
-	suite("Headroom", testHeadroom)
-	suite("Heap", testHeap)
-	suite("MinHeap", testMinHeap)
-	suite("Metaspace", testMetaspace)
-	suite("MemoryRegions", testMemoryRegions)
-	suite("ReservedCodeCache", testReservedCodeCache)
-	suite("Size", testSize)
-	suite("Stack", testStack)
-	suite.Run(t)
+var MinHeapRE = regexp.MustCompile(fmt.Sprintf("^-Xms(%s)$", SizePattern))
+
+type MinHeap Size
+
+func (h MinHeap) String() string {
+	return fmt.Sprintf("-Xms%s", Size(h))
+}
+
+func MatchMinHeap(s string) bool {
+	return MinHeapRE.MatchString(strings.TrimSpace(s))
+}
+
+func ParseMinHeap(s string) (*MinHeap, error) {
+	g := MinHeapRE.FindStringSubmatch(s)
+	if g == nil {
+		return nil, fmt.Errorf("%s does not match min heap pattern %s", s, MinHeapRE.String())
+	}
+
+	z, _ := ParseSize(g[1])
+
+	h := MinHeap(z)
+	return &h, nil
 }
