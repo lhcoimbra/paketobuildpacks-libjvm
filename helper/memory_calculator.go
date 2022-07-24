@@ -188,6 +188,28 @@ func (m MemoryCalculator) Execute() (map[string]string, error) {
 	if r.Stack.Provenance != calc.UserConfigured {
 		calculated = append(calculated, r.Stack.String())
 	}
+
+	if includeMins, ok := os.LookupEnv("BP_MEMORY_CALC_INCLUDE_MINS"); ok {
+		if yes, err := strconv.ParseBool(includeMins); yes {
+			if r.MinHeap == nil {
+				minHeap := calc.MinHeap{
+					Value:      r.Heap.Value,
+					Provenance: calc.Calculated,
+				}
+				calculated = append(calculated, minHeap.String())
+			}
+			if r.MinMetaspace == nil {
+				minMetaspace := calc.MinMetaspace{
+					Value:      r.Metaspace.Value,
+					Provenance: calc.Calculated,
+				}
+				calculated = append(calculated, minMetaspace.String())
+			}
+		} else if err != nil {
+			return nil, fmt.Errorf("unable to convert $BP_MEMORY_CALC_INCLUDE_MINS=%s to boolean\n%w", includeMins, err)
+		}
+	}
+
 	values = append(values, calculated...)
 
 	m.Logger.Infof("Calculated JVM Memory Configuration: %s (Total Memory: %s, Thread Count: %d, Loaded Class Count: %d, Headroom: %d%%)",
