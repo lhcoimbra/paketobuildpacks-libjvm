@@ -119,6 +119,12 @@ func testSize(t *testing.T, context spec.G, it spec.S) {
 			_, err := calc.ParseSize("1 0")
 			Expect(err).To(HaveOccurred())
 		})
+
+		it("does not parse overflown int64", func() {
+			_, err := calc.ParseSize("92233720368547758070")
+			Expect(err).To(HaveOccurred())
+		})
+
 	})
 
 	context("parse", func() {

@@ -17,6 +17,7 @@
 package calc_test
 
 import (
+	"fmt"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -44,6 +45,15 @@ func testHeap(t *testing.T, context spec.G, it spec.S) {
 
 	it("parses", func() {
 		Expect(calc.ParseHeap("-Xmx1K")).To(Equal(&calc.Heap{Value: calc.Kibi}))
+	})
+
+	it("does not parse -Xms", func() {
+		Expect(calc.ParseHeap("-Xms1K")).Error().To(MatchError(
+			fmt.Errorf("-Xms1K does not match heap pattern %s", calc.HeapRE.String())))
+	})
+
+	it("does not parse overflown int64", func() {
+		Expect(calc.ParseHeap("-Xmx92233720368547758070k")).Error().To(HaveOccurred())
 	})
 
 }

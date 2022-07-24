@@ -47,9 +47,12 @@ func testMinHeap(t *testing.T, context spec.G, it spec.S) {
 		Expect(calc.ParseMinHeap("-Xms1K")).To(Equal(&calc.MinHeap{Value: calc.Kibi}))
 	})
 
-	it("does not parse", func() {
+	it("does not parse -Xmx", func() {
 		Expect(calc.ParseMinHeap("-Xmx1K")).Error().To(MatchError(
 			fmt.Errorf("-Xmx1K does not match min heap pattern %s", calc.MinHeapRE.String())))
 	})
 
+	it("does not parse overflown int64", func() {
+		Expect(calc.ParseMinHeap("-Xms92233720368547758070k")).Error().To(HaveOccurred())
+	})
 }

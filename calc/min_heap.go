@@ -40,7 +40,10 @@ func ParseMinHeap(s string) (*MinHeap, error) {
 		return nil, fmt.Errorf("%s does not match min heap pattern %s", s, MinHeapRE.String())
 	}
 
-	z, _ := ParseSize(g[1])
+	z, err := ParseSize(g[1])
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse min heap size\n%w", err)
+	}
 
 	h := MinHeap(z)
 	return &h, nil
