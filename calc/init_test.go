@@ -31,6 +31,7 @@ func TestUnit(t *testing.T) {
 	suite("Heap", testHeap)
 	suite("MinHeap", testMinHeap)
 	suite("Metaspace", testMetaspace)
+	suite("MinMetaspace", testMinMetaspace)
 	suite("MemoryRegions", testMemoryRegions)
 	suite("ReservedCodeCache", testReservedCodeCache)
 	suite("Size", testSize)

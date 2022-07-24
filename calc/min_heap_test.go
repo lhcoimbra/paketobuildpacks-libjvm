@@ -48,8 +48,8 @@ func testMinHeap(t *testing.T, context spec.G, it spec.S) {
 	})
 
 	it("does not parse -Xmx", func() {
-		Expect(calc.ParseMinHeap("-Xmx1K")).Error().To(MatchError(
-			fmt.Errorf("-Xmx1K does not match min heap pattern %s", calc.MinHeapRE.String())))
+		err := fmt.Errorf("-Xmx1K does not match min heap pattern %s", calc.MinHeapRE.String())
+		Expect(calc.ParseMinHeap("-Xmx1K")).Error().To(MatchError(err))
 	})
 
 	it("does not parse overflown int64", func() {

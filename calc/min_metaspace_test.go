@@ -26,35 +26,35 @@ import (
 	"github.com/paketo-buildpacks/libjvm/calc"
 )
 
-func testMetaspace(t *testing.T, context spec.G, it spec.S) {
+func testMinMetaspace(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect = NewWithT(t).Expect
 	)
 
 	it("formats", func() {
-		Expect(calc.Metaspace{Value: calc.Kibi}.String()).To(Equal("-XX:MaxMetaspaceSize=1K"))
+		Expect(calc.MinMetaspace{Value: calc.Kibi}.String()).To(Equal("-XX:MetaspaceSize=1K"))
 	})
 
-	it("matches -XX:MaxMetaspaceSize", func() {
-		Expect(calc.MatchMetaspace("-XX:MaxMetaspaceSize=1K")).To(BeTrue())
+	it("matches -XX:MetaspaceSize", func() {
+		Expect(calc.MatchMinMetaspace("-XX:MetaspaceSize=1K")).To(BeTrue())
 	})
 
-	it("does not match non -XX:MaxMetaspaceSize", func() {
-		Expect(calc.MatchMetaspace("-Xss1K")).To(BeFalse())
+	it("does not match non -XX:MetaspaceSize", func() {
+		Expect(calc.MatchMinMetaspace("-Xss1K")).To(BeFalse())
 	})
 
 	it("parses", func() {
-		Expect(calc.ParseMetaspace("-XX:MaxMetaspaceSize=1K")).To(Equal(&calc.Metaspace{Value: calc.Kibi}))
+		Expect(calc.ParseMinMetaspace("-XX:MetaspaceSize=1K")).To(Equal(&calc.MinMetaspace{Value: calc.Kibi}))
 	})
 
-	it("does not parse -XX:MetaspaceSize", func() {
-		s := "-XX:MetaspaceSize=1K"
-		err := fmt.Errorf("%s does not match max metaspace pattern %s", s, calc.MetaspaceRE.String())
-		Expect(calc.ParseMetaspace(s)).Error().To(MatchError(err))
+	it("does not parse -XX:MaxMetaspaceSize", func() {
+		s := "-XX:MaxMetaspaceSize=1K"
+		err := fmt.Errorf("%s does not match metaspace pattern %s", s, calc.MinMetaspaceRE.String())
+		Expect(calc.ParseMinMetaspace(s)).Error().To(MatchError(err))
 	})
 
-	it("does not parse overflown -XX:MaxMetaspaceSize", func() {
-		_, err := calc.ParseMetaspace("-XX:MaxMetaspaceSize=92233720368547758070K")
+	it("does not parse overflown -XX:MetaspaceSize", func() {
+		_, err := calc.ParseMinMetaspace("-XX:MetaspaceSize=92233720368547758070K")
 		Expect(err).Error().To(HaveOccurred())
 	})
 }

@@ -48,8 +48,8 @@ func testHeap(t *testing.T, context spec.G, it spec.S) {
 	})
 
 	it("does not parse -Xms", func() {
-		Expect(calc.ParseHeap("-Xms1K")).Error().To(MatchError(
-			fmt.Errorf("-Xms1K does not match heap pattern %s", calc.HeapRE.String())))
+		err := fmt.Errorf("-Xms1K does not match heap pattern %s", calc.HeapRE.String())
+		Expect(calc.ParseHeap("-Xms1K")).Error().To(MatchError(err))
 	})
 
 	it("does not parse overflown int64", func() {
