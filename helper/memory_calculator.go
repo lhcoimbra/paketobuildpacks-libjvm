@@ -189,7 +189,7 @@ func (m MemoryCalculator) Execute() (map[string]string, error) {
 		calculated = append(calculated, r.Stack.String())
 	}
 
-	if includeMins, ok := os.LookupEnv("BP_MEMORY_CALC_INCLUDE_MINS"); ok {
+	if includeMins, ok := os.LookupEnv("BPL_MEMORY_CALC_INCLUDE_MINS"); ok {
 		if yes, err := strconv.ParseBool(includeMins); yes {
 			if r.MinHeap == nil {
 				minHeap := calc.MinHeap{
