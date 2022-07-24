@@ -37,12 +37,12 @@ func MatchMetaspace(s string) bool {
 func ParseMetaspace(s string) (*Metaspace, error) {
 	g := MetaspaceRE.FindStringSubmatch(s)
 	if g == nil {
-		return nil, fmt.Errorf("%s does not match max metaspace pattern %s", s, MetaspaceRE.String())
+		return nil, fmt.Errorf("%s does not match metaspace pattern %s", s, MetaspaceRE.String())
 	}
 
 	z, err := ParseSize(g[1])
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse max metaspace size\n%w", err)
+		return nil, fmt.Errorf("unable to parse metaspace size\n%w", err)
 	}
 
 	m := Metaspace(z)

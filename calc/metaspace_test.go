@@ -49,7 +49,7 @@ func testMetaspace(t *testing.T, context spec.G, it spec.S) {
 
 	it("does not parse -XX:MetaspaceSize", func() {
 		s := "-XX:MetaspaceSize=1K"
-		err := fmt.Errorf("%s does not match max metaspace pattern %s", s, calc.MetaspaceRE.String())
+		err := fmt.Errorf("%s does not match metaspace pattern %s", s, calc.MetaspaceRE.String())
 		Expect(calc.ParseMetaspace(s)).Error().To(MatchError(err))
 	})
 

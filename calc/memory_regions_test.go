@@ -43,11 +43,14 @@ func testMemoryRegions(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it("with flags", func() {
-			Expect(calc.NewMemoryRegionsFromFlags("-XX:MaxDirectMemorySize=1K -Xmx1K -XX:MaxMetaspaceSize=1K -XX:ReservedCodeCacheSize=1K -Xss1K")).
+			s := "-XX:MaxDirectMemorySize=1K -Xmx1K -Xms1K -XX:MetaspaceSize=1K -XX:MaxMetaspaceSize=1K -XX:ReservedCodeCacheSize=1K -Xss1K"
+			Expect(calc.NewMemoryRegionsFromFlags(s)).
 				To(Equal(calc.MemoryRegions{
 					DirectMemory:      calc.DirectMemory{Value: calc.Kibi, Provenance: calc.UserConfigured},
 					Heap:              &calc.Heap{Value: calc.Kibi, Provenance: calc.UserConfigured},
+					MinHeap:           &calc.MinHeap{Value: calc.Kibi, Provenance: calc.UserConfigured},
 					Metaspace:         &calc.Metaspace{Value: calc.Kibi, Provenance: calc.UserConfigured},
+					MinMetaspace:      &calc.MinMetaspace{Value: calc.Kibi, Provenance: calc.UserConfigured},
 					ReservedCodeCache: calc.ReservedCodeCache{Value: calc.Kibi, Provenance: calc.UserConfigured},
 					Stack:             calc.Stack{Value: calc.Kibi, Provenance: calc.UserConfigured},
 				}))
@@ -60,7 +63,9 @@ func testMemoryRegions(t *testing.T, context spec.G, it spec.S) {
 				DirectMemory:      calc.DirectMemory{Value: calc.Kibi},
 				HeadRoom:          &calc.HeadRoom{Value: calc.Kibi},
 				Heap:              &calc.Heap{Value: calc.Kibi},
+				MinHeap:           &calc.MinHeap{Value: calc.Kibi},
 				Metaspace:         &calc.Metaspace{Value: calc.Kibi},
+				MinMetaspace:      &calc.MinMetaspace{Value: calc.Kibi},
 				ReservedCodeCache: calc.ReservedCodeCache{Value: calc.Kibi},
 				Stack:             calc.Stack{Value: calc.Kibi},
 			}
@@ -77,7 +82,7 @@ func testMemoryRegions(t *testing.T, context spec.G, it spec.S) {
 
 		it("returns string", func() {
 			Expect(m.AllRegionsString(2)).To(Equal(
-				"-Xmx1K, 1K headroom, -XX:MaxDirectMemorySize=1K, -XX:MaxMetaspaceSize=1K, -XX:ReservedCodeCacheSize=1K, -Xss1K * 2 threads"))
+				"-Xms1K, -Xmx1K, 1K headroom, -XX:MaxDirectMemorySize=1K, -XX:MetaspaceSize=1K, -XX:MaxMetaspaceSize=1K, -XX:ReservedCodeCacheSize=1K, -Xss1K * 2 threads"))
 		})
 	})
 

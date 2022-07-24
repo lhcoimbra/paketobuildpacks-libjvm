@@ -27,7 +27,9 @@ type MemoryRegions struct {
 	DirectMemory      DirectMemory
 	HeadRoom          *HeadRoom
 	Heap              *Heap
+	MinHeap           *MinHeap
 	Metaspace         *Metaspace
+	MinMetaspace      *MinMetaspace
 	ReservedCodeCache ReservedCodeCache
 	Stack             Stack
 }
@@ -57,12 +59,24 @@ func NewMemoryRegionsFromFlags(flags string) (MemoryRegions, error) {
 				return MemoryRegions{}, fmt.Errorf("unable to parse heap\n%w", err)
 			}
 			m.Heap.Provenance = UserConfigured
+		} else if MatchMinHeap(f) {
+			m.MinHeap, err = ParseMinHeap(f)
+			if err != nil {
+				return MemoryRegions{}, fmt.Errorf("unable to parse min heap\n%w", err)
+			}
+			m.MinHeap.Provenance = UserConfigured
 		} else if MatchMetaspace(f) {
 			m.Metaspace, err = ParseMetaspace(f)
 			if err != nil {
 				return MemoryRegions{}, fmt.Errorf("unable to parse metaspace\n%w", err)
 			}
 			m.Metaspace.Provenance = UserConfigured
+		} else if MatchMinMetaspace(f) {
+			m.MinMetaspace, err = ParseMinMetaspace(f)
+			if err != nil {
+				return MemoryRegions{}, fmt.Errorf("unable to parse metaspace\n%w", err)
+			}
+			m.MinMetaspace.Provenance = UserConfigured
 		} else if MatchReservedCodeCache(f) {
 			m.ReservedCodeCache, err = ParseReservedCodeCache(f)
 			if err != nil {
@@ -101,6 +115,9 @@ func (m MemoryRegions) AllRegionsString(threadCount int) string {
 	var s []string
 
 	if m.HeadRoom != nil {
+		if m.MinHeap != nil {
+			s = append(s, m.MinHeap.String())
+		}
 		s = append(s, m.Heap.String())
 	}
 	s = append(s, m.NonHeapRegionsString(threadCount))
@@ -123,6 +140,9 @@ func (m MemoryRegions) FixedRegionsString(threadCount int) string {
 	var s []string
 
 	s = append(s, m.DirectMemory.String())
+	if m.MinMetaspace != nil {
+		s = append(s, m.MinMetaspace.String())
+	}
 	if m.Metaspace != nil {
 		s = append(s, m.Metaspace.String())
 	}
